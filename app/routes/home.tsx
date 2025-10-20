@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <>
       <header>
-        <h1>🧉 Mate News</h1>
+        <h1 className="font-bold text-2xl">🧉 Mate News</h1>
       </header>
       <main></main>
     </>
