@@ -1,3 +1,4 @@
+import { getSession } from "~/sessions.server";
 import type { Route } from "./+types/home";
 
 export function meta({}: Route.MetaArgs) {
@@ -7,13 +8,15 @@ export function meta({}: Route.MetaArgs) {
   ];
 }
 
+export async function loader({ request }: Route.LoaderArgs) {
+  const session = await getSession(request.headers.get("Cookie"));
+  console.log("userId", session.get("userId"));
+}
+
 export default function Home() {
   return (
     <>
-      <header>
-        <h1 className="font-bold text-2xl">🧉 Mate News</h1>
-      </header>
-      <main></main>
+      <p>Home route</p>
     </>
   );
 }
