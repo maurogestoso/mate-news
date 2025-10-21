@@ -1,10 +1,12 @@
-import { commitSession, getSession } from "~/sessions.server";
-import type { Route } from "./+types/signup";
 import { redirect } from "react-router";
+import type { Route } from "./+types/signup";
+
+import { commitSession, getSession } from "~/sessions.server";
 import { createUser } from "~/db/auth";
 
 export async function action({ request }: Route.ActionArgs) {
   const session = await getSession(request.headers.get("Cookie"));
+  console.log("signup.action => session", session);
   const form = await request.formData();
   const name = form.get("name") as string;
   const email = form.get("email") as string;
@@ -21,7 +23,10 @@ export async function action({ request }: Route.ActionArgs) {
   }
 
   const [{ insertedId }] = await createUser({ name, email, password });
+  console.log("signup.action => created user id:", insertedId);
+
   session.set("userId", insertedId);
+  console.log("signup.action => session", session);
 
   return redirect("/", {
     headers: { "Set-Cookie": await commitSession(session) },
