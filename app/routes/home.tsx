@@ -1,6 +1,7 @@
 import { getSession } from "~/sessions.server";
 import type { Route } from "./+types/home";
 import { getUser } from "~/db/user";
+import { getAllPosts } from "~/db/posts";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,28 +12,29 @@ export function meta({}: Route.MetaArgs) {
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
+  const posts = await getAllPosts();
 
   const userId = session.get("userId");
   if (!userId) {
-    return { user: null };
+    return { user: null, posts };
   }
 
   const user = await getUser(userId);
-  return { user };
+  return { user, posts };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
-  const { user } = loaderData;
+  const { posts } = loaderData;
   return (
     <>
-      <p>Home route</p>
-      {user ? (
-        <>
-          <p>Logged in as {user.name}</p>
-        </>
-      ) : (
-        <p>Not logged in</p>
-      )}
+      {posts.map((post) => (
+        <article>
+          <h3>{post.title}</h3>
+          <p>
+            by {post.userName} on {post.createdAt.toLocaleDateString("en-GB")}
+          </p>
+        </article>
+      ))}
     </>
   );
 }

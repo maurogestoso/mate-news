@@ -7,3 +7,12 @@ export const usersTable = sqliteTable("users_table", {
   passwordHash: text("password_hash").notNull(),
   passwordSalt: text("password_salt").notNull(),
 });
+
+export const postsTable = sqliteTable("posts_table", {
+  id: int().primaryKey({ autoIncrement: true }),
+  title: text().notNull(),
+  userId: int()
+    .notNull()
+    .references(() => usersTable.id),
+  createdAt: int({ mode: "timestamp" }).notNull(),
+});
